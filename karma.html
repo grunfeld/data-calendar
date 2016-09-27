@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Contribution graph</title>
+        <style type="text/css">
+        <!--
+            body, html {
+                margin : 10px;
+            }
+            #karma div {
+                position: relative;
+                float: left;
+                display: block;
+                width: 16px;
+                height: 16px;
+                background-color: #EEEEEE;
+                color: #767676;
+                font-size:12px;
+                border: 1px;
+                padding: 0;
+                margin: 1px;
+                text-align: center;
+                vertical-align: middle;
+            }
+            #days div {
+                position: relative;
+                float: left;
+                display: block;
+                width: 36px;
+                height: 16px;
+                background-color: #FFFFFF;
+                color: #767676;
+                font-size:12px;
+                border: 1px;
+                padding: 0;
+                margin: 1px;
+                text-align: left;
+                vertical-align: middle;
+                clear:left;
+            }
+            #months div {
+                position: relative;
+                float: left;
+                display: block;
+                height: 16px;
+                background-color: #FFFFFF;
+                color: #767676;
+                font-size: 12px;
+                border: 1px;
+                padding: 0;
+                margin: 1px;
+                text-align: center;
+                vertical-align: middle;
+            }
+            #legend {
+                position: absolute;
+                top: 180px;
+                background-color: #FFFFFF;
+                font-size: 12px;
+                color: #767676;
+            }
+            #legend div {
+                display:block;
+                margin: 1px;
+                height: 16px;
+            }
+        -->
+        </style>
+    </head>
+
+    <body>
+        <div id="chart">
+            <div id="months"></div>
+            <br />
+            <div id="days" style="float:left"><div></div><div>Mon</div><div></div><div>Wed</div><div></div><div>Fri</div></div>
+            <div id="karma" style="float:left" data-checkins="2 2016/09/01 1 2016/09/06 2 2016/09/08 2 2016/09/11 1 2016/09/15 2 2016/09/16 2 2016/09/18 1 2016/09/19 1 2016/09/20 1 2016/09/21 2 2016/09/23">
+            </div>
+            <br><br>
+            <div id="legend"><div style="float:left;width:36px">Less</div><div style="float:left;width:16px;background-color:#EEEEEE"></div><div style="float:left;width:16px;background-color:#d6e685"></div><div style="float:left;width:16px;background-color:#8cc665"></div><div style="float:left;width:16px;background-color:#44a340"></div><div style="float:left;width:16px;background-color:#1e6823"></div><div style="float:left;width:36px;text-align:right">More</div></div>
+        </div>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.2/lodash.min.js"></script>
+        <!-- script type="text/javascript" src="html2canvas.js"></script -->
+        <script>
+            var colors   = ['#FFFFFF', '#EEEEEE', '#d6e685', '#8cc665', '#44a340', '#1e6823'];
+            var checkins = $('#karma').data("checkins").split(" ");
+            var from     = new Date(checkins[1]);
+            if (from.getDate() != 1) {
+                var month = from.getMonth() + 1;
+                checkins.unshift("0", from.getFullYear() + "/" + month + "/01");
+                from = new Date(checkins[1]);
+            }
+            //console.log("from date = " + from);
+            var to      = new Date(checkins[checkins.length-1]);
+            const msDay = 60 * 60 * 24 * 1000;
+            var n       = Math.floor(to - from) / msDay + 1;
+            n          += from.getDay() + 1;
+            var adj_n   = (n < 31) ? 31 : n;
+            var cols    = Math.ceil(adj_n/7);
+            //console.log("cols = " + cols);
+            // Map the datapoints to the div-numbers
+            var mapped_data = {};
+            var last_entry  = 0;
+            // Calculate offsets from the first top-left square
+            // from.getDay() is the offset of the 1st day of the 1st month
+            for (var c = 3; c < checkins.length; c+=2) {
+                var d                   = new Date(checkins[c]);
+                var diff                = Math.floor(d - from) / msDay + from.getDay();
+                var col                 = Math.floor(diff / 7);
+                var row                 = diff % 7;
+                last_entry              = row*cols + col;
+                mapped_data[last_entry] = checkins[c-1];
+                //console.log("Processed date = " + d);
+                //console.log("i = ", row*cols + col, " #c = ", checkins[c-1]);
+            }
+            $('#karma').empty();
+            var divs = "";
+            for (var i = 0; i < cols*7; i++) {
+                var sty = "style=\"";
+                if (i % cols == 0) sty += "clear:left;"
+                if (_.has(mapped_data, i)) {
+                    // TODO
+                    //console.log(parseInt(mapped_data[i])+1);
+                    sty += "background-color:" + colors[parseInt(mapped_data[i])+1] + ";";
+                }
+                sty +="\"";
+                divs += "<div " + sty + "></div>";
+            }
+            $('#karma').html(divs);
+            var from_m = from.getMonth();
+            var to_m   = to.getMonth();
+            $('#months').empty();
+            var m          = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var month_divs = "<div style=\"width:36px\"></div>";
+            for (var i = from_m; i <= to_m; i++) {
+                month_divs += "<div style=\"width:84px\">" + m[i] + "</div>";
+            }
+            $('#months').html(month_divs);
+            
+/*
+            html2canvas(document.body, {
+                onrendered: function(canvas) {
+                    document.body.appendChild(canvas);
+                }
+            });
+*/
+        </script>
+    </body>
+</html>
