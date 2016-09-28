@@ -8,50 +8,32 @@
             body, html {
                 margin : 10px;
             }
-            #karma div {
+            #karma div, #days div, #months div {
                 position: relative;
                 float: left;
                 display: block;
-                width: 16px;
-                height: 16px;
-                background-color: #EEEEEE;
-                color: #767676;
-                font-size:12px;
-                border: 1px;
-                padding: 0;
-                margin: 1px;
-                text-align: center;
-                vertical-align: middle;
-            }
-            #days div {
-                position: relative;
-                float: left;
-                display: block;
-                width: 36px;
-                height: 16px;
-                background-color: #FFFFFF;
-                color: #767676;
-                font-size:12px;
-                border: 1px;
-                padding: 0;
-                margin: 1px;
-                text-align: left;
-                vertical-align: middle;
-                clear:left;
-            }
-            #months div {
-                position: relative;
-                float: left;
-                display: block;
-                height: 16px;
-                background-color: #FFFFFF;
                 color: #767676;
                 font-size: 12px;
                 border: 1px;
                 padding: 0;
                 margin: 1px;
-                text-align: center;
                 vertical-align: middle;
+                height: 16px;
+            }
+            #karma div {
+                width: 16px;
+                background-color: #EEEEEE;
+                text-align: center;                
+            }
+            #days div {
+                width: 36px;
+                background-color: #FFFFFF;
+                text-align: left;
+                clear:left;
+            }
+            #months div {
+                background-color: #FFFFFF;
+                text-align: center;
             }
             #legend {
                 position: absolute;
@@ -74,8 +56,9 @@
             <div id="months"></div>
             <br />
             <div id="days" style="float:left"><div></div><div>Mon</div><div></div><div>Wed</div><div></div><div>Fri</div></div>
-            <div id="karma" style="float:left" data-checkins="2 2016/09/01 1 2016/09/06 2 2016/09/08 2 2016/09/11 1 2016/09/15 2 2016/09/16 2 2016/09/18 1 2016/09/19 1 2016/09/20 1 2016/09/21 2 2017/11/23">
+            <div id="karma" style="float:left" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01 1 2016/08/31 10 2016/09/01 1 2016/09/30 10 2016/10/01 1 2016/10/31 10 2016/11/01 1 2016/11/30 10 2016/12/01 1 2016/12/31">
             </div>
+            
             <br><br>
             <div id="legend"><div style="float:left;width:36px">Less</div><div style="float:left;width:16px;background-color:#EEEEEE"></div><div style="float:left;width:16px;background-color:#d6e685"></div><div style="float:left;width:16px;background-color:#8cc665"></div><div style="float:left;width:16px;background-color:#44a340"></div><div style="float:left;width:16px;background-color:#1e6823"></div><div style="float:left;width:36px;text-align:right">More</div></div>
         </div>
@@ -104,7 +87,7 @@
             var last_entry  = 0;
             // Calculate offsets from the first top-left square
             // from.getDay() is the offset of the 1st day of the 1st month
-            for (var c = 3; c < checkins.length; c+=2) {
+            for (var c = 1; c < checkins.length; c+=2) {
                 var d                   = new Date(checkins[c]);
                 var diff                = Math.floor(d - from) / msDay + from.getDay();
                 var col                 = Math.floor(diff / 7);
@@ -153,14 +136,42 @@
             var to_m   = to.getMonth();
             $('#months').empty();
             var m          = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var days_in_m  = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
             var month_divs = "<div style=\"width:36px\"></div>";
+            
             // FIXME - need to calculate how many columns each month takes and then decide the width
-            var j_max = Math.floor(cols/4);
-            var i = from_m;
-            for (var j = 0; j < j_max; j++) {
-                month_divs += "<div style=\"width:74px\">" + m[i] + "</div>";
+            
+            var cols_for_this_month        = Math.ceil((from.getDay() + days_in_m[from.getMonth()])/7);
+            var month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
+            var overlaps_with_prev         = (0 == from.getDay()) ? false : true;
+            var days_overlapping_with_next = (7 - (7 * cols_for_this_month - (from.getDay() + days_in_m[from.getMonth()]))) % 7;
+            //console.log("ovl = ", days_overlapping_with_next);
+            var sty = "style=\"";
+            sty     += "width:" + month_col_width.toString() + "px;";
+            if (overlaps_with_prev) {
+                sty += "margin-left:-16px";
+            }
+            sty += "\"";
+            month_divs += "<div " + sty + ">" + m[from_m] + "</div>";
+            var j_max = Math.floor(cols/4); // FIXME 4 should be replaced with average number of columns/month
+            var i     = from_m;
+            for (var j = 1; j < j_max; j++) {
                 i++;
                 i = i % 12;
+                cols_for_this_month        = Math.ceil((days_overlapping_with_next + days_in_m[i])/7);
+                month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
+                overlaps_with_prev         = (0 == days_overlapping_with_next) ? false : true;
+                days_overlapping_with_next = (7 - (7 * cols_for_this_month - (days_overlapping_with_next + days_in_m[i]))) % 7;
+                //console.log("m = ", m[i]);
+                //console.log("cols/m = ", cols_for_this_month);
+                //console.log("ovl = ", days_overlapping_with_next);
+                sty  = "style=\"";
+                sty += "width:" + month_col_width.toString() + "px;";
+                if (overlaps_with_prev) {
+                    sty += "margin-left:-16px";
+                }
+                sty += "\"";
+                month_divs += "<div " + sty + ">" + m[i] + "</div>";
             }
             $('#months').html(month_divs);
 /*
