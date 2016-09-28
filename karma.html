@@ -77,7 +77,7 @@
             //console.log("from date = " + from);
             var to      = new Date(checkins[checkins.length-1]);
             const msDay = 60 * 60 * 24 * 1000;
-            var n       = Math.floor(to - from) / msDay + 1;
+            var n       = Math.floor(to - from) / msDay;
             n          += from.getDay() + 1;
             var adj_n   = (n < 28) ? 28 : n;
             var cols    = Math.ceil(adj_n/7);
@@ -106,7 +106,7 @@
                 if ((i+1)%cols == 0) {
                     //console.log(last_day);
                     if ((i+1)/cols > last_day) {
-                        color = 0;
+                        color = 0; // Show white boxes beyond the last day of the checkin
                     }
                 }
                 if (i % cols == 0) {
@@ -139,8 +139,6 @@
             var days_in_m  = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
             var month_divs = "<div style=\"width:36px\"></div>";
             
-            // FIXME - need to calculate how many columns each month takes and then decide the width
-            
             var cols_for_this_month        = Math.ceil((from.getDay() + days_in_m[from.getMonth()])/7);
             var month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
             var overlaps_with_prev         = (0 == from.getDay()) ? false : true;
@@ -153,7 +151,7 @@
             }
             sty += "\"";
             month_divs += "<div " + sty + ">" + m[from_m] + "</div>";
-            var j_max = Math.floor(cols/4); // FIXME 4 should be replaced with average number of columns/month
+            var j_max = Math.floor(cols/4.35); // FIXME 4.35 = (366/12) / 7
             var i     = from_m;
             for (var j = 1; j < j_max; j++) {
                 i++;
