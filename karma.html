@@ -8,12 +8,13 @@
             body, html {
                 margin : 10px;
             }
+            .spacer10 { height: 10px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
             #karma div, #days div, #months div {
                 position: relative;
                 float: left;
                 display: block;
                 color: #767676;
-                font-size: 12px;
+                font-size: 14px;
                 border: 1px;
                 padding: 0;
                 margin: 1px;
@@ -37,9 +38,9 @@
             }
             #legend {
                 position: absolute;
-                top: 180px;
+                top: 190px;
                 background-color: #FFFFFF;
-                font-size: 12px;
+                font-size: 14px;
                 color: #767676;
             }
             #legend div {
@@ -54,6 +55,7 @@
     <body>
         <div id="chart">
             <div id="months"></div>
+            <div class="spacer10"></div>
             <br />
             <div id="days" style="float:left"><div></div><div>Mon</div><div></div><div>Wed</div><div></div><div>Fri</div></div>
             <div id="karma" style="float:left" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01 1 2016/08/31 10 2016/09/01 1 2016/09/30 10 2016/10/01 1 2016/10/31 10 2016/11/01 1 2016/11/30 10 2016/12/01 1 2016/12/31 5 2017/01/05">
@@ -135,17 +137,16 @@
             var from_m = from.getMonth();
             var to_m   = to.getMonth();
             $('#months').empty();
-            var m          = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            var days_in_m  = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            var month_divs = "<div style=\"width:36px\"></div>";
-            
+            var m                          = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var days_in_m                  = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            var month_divs                 = "<div style=\"width:36px\"></div>";
             var cols_for_this_month        = Math.ceil((from.getDay() + days_in_m[from.getMonth()])/7);
             var month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
             var overlaps_with_prev         = (0 == from.getDay()) ? false : true;
             var days_overlapping_with_next = (7 - (7 * cols_for_this_month - (from.getDay() + days_in_m[from.getMonth()]))) % 7;
             //console.log("ovl = ", days_overlapping_with_next);
             var sty = "style=\"";
-            sty     += "width:" + month_col_width.toString() + "px;";
+            sty    += "width:" + month_col_width.toString() + "px;";
             if (overlaps_with_prev) {
                 sty += "margin-left:-16px";
             }
