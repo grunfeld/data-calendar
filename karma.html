@@ -58,7 +58,9 @@
             <div class="spacer10"></div>
             <br />
             <div id="days" style="float:left"><div></div><div>Mon</div><div></div><div>Wed</div><div></div><div>Fri</div></div>
-            <div id="karma" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01 1 2016/08/31 10 2016/09/01 1 2016/09/30 10 2016/10/01 1 2016/10/31 10 2016/11/01 1 2016/11/30 10 2016/12/01 1 2016/12/31 5 2017/01/05"> </div>
+            <div id="karma1" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01 1 2016/08/31 10 2016/09/01 1 2016/09/30 10 2016/10/01 1 2016/10/31 10 2016/11/01 1 2016/11/30 10 2016/12/01 1 2016/12/31 5 2017/01/05"> </div>
+            <div id="karma" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01"></div>
+
             <div style="float:left"><h1 id="username" style="color:green"></h1></div>
             <br><br>
             <div id="legend"><div style="float:left;width:36px">Less</div>
@@ -81,57 +83,80 @@
             var borders  = ['#FFFFFF', '#CCCCCC', '#8cc665', '#44a340', '#1e6823', '#005800'];
             var checkins = $('#karma').data("checkins").split(" ");
             var username = $('#karma').data("name");
-            var total = 0;
-            for (var i = 0; i < checkins.length; i+=2) {
+            var total    = 0;
+            for (var i = 0; i < checkins.length; i += 2) {
                 total += parseInt(checkins[i]);
             }
             $('#username').html('&nbsp;&nbsp;&nbsp;' + username + "&nbsp;<span style=\"font-size:14px;color:gray\">" + total.format() + " contributions</span>");
-            var from     = new Date(checkins[1]);
+            
+            var short_months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+            var from         = new Date(checkins[1]);
             if (from.getDate() != 1) {
-                var month = from.getMonth() + 1;
-                checkins.unshift("0", from.getFullYear() + "/" + month + "/01");
+                checkins.unshift("0", from.getFullYear() + "/" + short_months[from.getMonth()] + "/01");
                 from = new Date(checkins[1]);
             }
             //console.log("from date = " + from);
+
+            //////////////////////////////////////////////////////////////////
+            // NOTE: If the last date in the data less than today, then add today as the last entry
+            // with 0 contributions. This may not always be desirable e.g., if we only want to see
+            // the historical data terminating at a specific older date.
+            var today      = new Date();
+            var short_date = today.getDate().toString();
+            if (short_date.length == 1)
+                short_date = "0" + short_date;
+            var today_short_format = today.getFullYear() + "/" + short_months[today.getMonth()] + "/" + short_date;   
+            //console.log(today_short_format);
+            if (today_short_format != checkins[checkins.length-1] && today > new Date(checkins[checkins.length-1])) {
+                checkins.push("0");
+                checkins.push(today_short_format);
+            }
+            //////////////////////////////////////////////////////////////////
+
             var to      = new Date(checkins[checkins.length-1]);
-            const msDay = 60 * 60 * 24 * 1000;
+            //console.log(to);
+            var msDay   = 60 * 60 * 24 * 1000;
             var n       = Math.floor(to - from) / msDay;
             n          += from.getDay() + 1;
             var adj_n   = (n < 28) ? 28 : n;
             var cols    = Math.ceil(adj_n/7);
             //console.log("cols = " + cols);
             // Map the datapoints to the div-numbers
-            var mapped_data = {};
-            var last_entry  = 0;
+            var mapped_data  = {};
+            var checkin_date = {}; // For the tooltip
+            var last_entry   = 0;
             // Calculate offsets from the first top-left square
             // from.getDay() is the offset of the 1st day of the 1st month
-            for (var c = 1; c < checkins.length; c+=2) {
-                var d                   = new Date(checkins[c]);
-                var diff                = Math.floor(d - from) / msDay + from.getDay();
-                var col                 = Math.floor(diff / 7);
-                var row                 = diff % 7;
-                last_entry              = row*cols + col;
-                mapped_data[last_entry] = checkins[c-1];
+            for (var c = 1; c < checkins.length; c += 2) {
+                var d                    = new Date(checkins[c]);
+                var diff                 = Math.floor(d - from) / msDay + from.getDay();
+                var col                  = Math.floor(diff / 7);
+                var row                  = diff % 7;
+                last_entry               = row * cols + col;
+                mapped_data[last_entry]  = checkins[c-1];
+                checkin_date[last_entry] = checkins[c];
                 //console.log("Processed date = " + d);
                 //console.log("i = ", row*cols + col, " #c = ", checkins[c-1]);
             }
             $('#karma').empty();
-            var last_day = to.getDay();
-            var divs = "";
+            var last_day    = to.getDay();
+            var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var divs        = "";
             for (var i = 0; i < cols*7; i++) {
                 var sty   = "style=\"";
                 var color = 1;
-                if ((i+1)%cols == 0) {
+                if ((i+1) % cols === 0) {
                     //console.log(last_day);
-                    if ((i+1)/cols > last_day) {
+                    if ((i+1) / cols > last_day) {
                         color = 0; // Show white boxes beyond the last day of the checkin
                     }
                 }
-                if (i % cols == 0) {
-                    sty += "clear:left;"
+                if (i % cols === 0) {
+                    sty += "clear:left;";
                 }
+                var val = 0;
                 if (_.has(mapped_data, i)) {
-                    var val   = parseInt(mapped_data[i]);
+                    val   = parseInt(mapped_data[i]);
                     // Choose these values as per the data
                     if (val <= 0) {
                         color = 1;
@@ -150,19 +175,24 @@
                 if (color > 1)
                     sty  += "box-shadow: inset 0 0 1px 1px " + borders[color] + ";";
                 sty  += "\"";
-                divs += "<div " + sty + "></div>";
+                var tooltip = "";
+                if (val > 0) {
+                    var tooltip_date           = new Date(checkin_date[i]);
+                    var formatted_tooltip_date = month_names[tooltip_date.getMonth()] + " " + tooltip_date.getDate() + ", " + tooltip_date.getFullYear();
+                    var is_plural = (val == 1) ? "contribution" : "contributions";
+                    tooltip       = " title=\"" + val.toString() + " " + is_plural + " on " + formatted_tooltip_date + "\"";
+                }
+                divs += "<div " + sty + tooltip + "></div>";
             }
             $('#karma').html(divs);
             var from_m = from.getMonth();
-            var to_m   = to.getMonth();
             $('#months').empty();
-            var m                          = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            var days_in_m                  = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            var days_in_a_month            = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
             var month_divs                 = "<div style=\"width:36px\"></div>";
-            var cols_for_this_month        = Math.ceil((from.getDay() + days_in_m[from.getMonth()])/7);
+            var cols_for_this_month        = Math.ceil((from.getDay() + days_in_a_month[from.getMonth()])/7);
             var month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
-            var overlaps_with_prev         = (0 == from.getDay()) ? false : true;
-            var days_overlapping_with_next = (7 - (7 * cols_for_this_month - (from.getDay() + days_in_m[from.getMonth()]))) % 7;
+            var overlaps_with_prev         = (0 === from.getDay()) ? false : true;
+            var days_overlapping_with_next = (7 - (7 * cols_for_this_month - (from.getDay() + days_in_a_month[from.getMonth()]))) % 7;
             //console.log("ovl = ", days_overlapping_with_next);
             var sty = "style=\"";
             sty    += "width:" + month_col_width.toString() + "px;";
@@ -170,17 +200,17 @@
                 sty += "margin-left:-16px";
             }
             sty += "\"";
-            month_divs += "<div " + sty + ">" + m[from_m] + "</div>";
+            month_divs += "<div " + sty + ">" + month_names[from_m] + "</div>";
             var j_max = Math.floor(cols/4.2); // FIXME 4.3 = (366/12) / 7
             var i     = from_m;
             for (var j = 1; j < j_max; j++) {
                 i++;
                 i = i % 12;
-                cols_for_this_month        = Math.ceil((days_overlapping_with_next + days_in_m[i])/7);
+                cols_for_this_month        = Math.ceil((days_overlapping_with_next + days_in_a_month[i])/7);
                 month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
-                overlaps_with_prev         = (0 == days_overlapping_with_next) ? false : true;
-                days_overlapping_with_next = (7 - (7 * cols_for_this_month - (days_overlapping_with_next + days_in_m[i]))) % 7;
-                //console.log("m = ", m[i]);
+                overlaps_with_prev         = (0 === days_overlapping_with_next) ? false : true;
+                days_overlapping_with_next = (7 - (7 * cols_for_this_month - (days_overlapping_with_next + days_in_a_month[i]))) % 7;
+                //console.log("m = ", month_names[i]);
                 //console.log("cols/m = ", cols_for_this_month);
                 //console.log("ovl = ", days_overlapping_with_next);
                 sty  = "style=\"";
@@ -189,7 +219,7 @@
                     sty += "margin-left:-16px";
                 }
                 sty += "\"";
-                month_divs += "<div " + sty + ">" + m[i] + "</div>";
+                month_divs += "<div " + sty + ">" + month_names[i] + "</div>";
             }
             $('#months').html(month_divs);
 /*
