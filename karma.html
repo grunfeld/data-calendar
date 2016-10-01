@@ -58,11 +58,11 @@
             <div class="spacer10"></div>
             <br />
             <div id="days" style="float:left"><div></div><div>Mon</div><div></div><div>Wed</div><div></div><div>Fri</div></div>
-            <div id="karma1" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01 1 2016/08/31 10 2016/09/01 1 2016/09/30 10 2016/10/01 1 2016/10/31 10 2016/11/01 1 2016/11/30 10 2016/12/01 1 2016/12/31 5 2017/01/05"> </div>
-            <div id="karma" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01"></div>
+            <div id="karma_t1" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01 1 2016/08/31 10 2016/09/01 1 2016/09/30 10 2016/10/01 1 2016/10/31 10 2016/11/01 1 2016/11/30 10 2016/12/01 1 2016/12/31 5 2017/01/05"> </div>
+            <div id="karma_t2" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01"></div>
+            <div id="karma" style="float:left" data-name="Abhijeet" data-checkins="11 2016/09/27 133 2016/09/28 17 2016/09/29 3 2016/09/30 91 2016/10/01"></div>
 
             <div style="float:left"><h1 id="username" style="color:green"></h1></div>
-            <br><br>
             <div id="legend"><div style="float:left;width:36px">Less</div>
                 <div style="float:left;width:16px;background-color:#EEEEEE;box-shadow: inset 0 0 1px 1px #CCCCCC"></div>
                 <div style="float:left;width:16px;background-color:#d6e685;box-shadow: inset 0 0 1px 1px #8cc665"></div>
@@ -88,9 +88,9 @@
                 total += parseInt(checkins[i]);
             }
             $('#username').html('&nbsp;&nbsp;&nbsp;' + username + "&nbsp;<span style=\"font-size:14px;color:gray\">" + total.format() + " contributions</span>");
-            
             var short_months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
             var from         = new Date(checkins[1]);
+            var first_date_in_orig_data = from;
             if (from.getDate() != 1) {
                 checkins.unshift("0", from.getFullYear() + "/" + short_months[from.getMonth()] + "/01");
                 from = new Date(checkins[1]);
@@ -141,6 +141,9 @@
             $('#karma').empty();
             var last_day    = to.getDay();
             var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var formatted_start_date =  month_names[first_date_in_orig_data.getMonth()] + " " + first_date_in_orig_data.getDate() + " " + first_date_in_orig_data.getFullYear();
+            var formatted_end_date   =  month_names[to.getMonth()] + " " + to.getDate() + " " + to.getFullYear();
+            $('#username').append("<br>&nbsp;&nbsp;&nbsp;<span style=\"font-size:14px;font-weight:normal;color:gray\">" +  formatted_start_date + " - " +  formatted_end_date  + "</span>");
             var divs        = "";
             for (var i = 0; i < cols*7; i++) {
                 var sty   = "style=\"";
