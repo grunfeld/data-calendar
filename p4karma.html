@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Contribution graph</title>
+        <style type="text/css">
+        <!--
+            body, html {
+                margin : 10px;
+            }
+            .spacer10 { height: 10px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+            #karma div, #days div, #months div {
+                position: relative;
+                float: left;
+                display: block;
+                color: #767676;
+                font-size: 14px;
+                border: 1px;
+                padding: 0;
+                margin: 1px;
+                vertical-align: middle;
+                height: 16px;
+            }
+            #karma div {
+                width: 16px;
+                background-color: #EEEEEE;
+                text-align: center;
+            }
+            #days div {
+                width: 36px;
+                background-color: #FFFFFF;
+                text-align: left;
+                clear:left;
+            }
+            #months div {
+                background-color: #FFFFFF;
+                text-align: center;
+            }
+            #legend {
+                position: absolute;
+                top: 190px;
+                background-color: #FFFFFF;
+                font-size: 14px;
+                color: #767676;
+            }
+            #legend div {
+                display:block;
+                margin: 1px;
+                height: 16px;
+            }
+        -->
+        </style>
+    </head>
+
+    <body>
+        <div id="chart">
+            <div id="months"></div>
+            <div class="spacer10"></div>
+            <br />
+            <div id="days" style="float:left"><div></div><div>Mon</div><div></div><div>Wed</div><div></div><div>Fri</div></div>
+            <div id="karma_t1" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01 1 2016/08/31 10 2016/09/01 1 2016/09/30 10 2016/10/01 1 2016/10/31 10 2016/11/01 1 2016/11/30 10 2016/12/01 1 2016/12/31 5 2017/01/05"> </div>
+            <div id="karma_t2" style="float:left" data-name="Abhijeet" data-checkins="10 2016/01/01 1 2016/01/31 10 2016/02/01 1 2016/02/29 10 2016/03/01 1 2016/03/31 10 2016/04/01 1 2016/04/30 10 2016/05/01 1 2016/05/31 10 2016/06/01 1 2016/06/30 10 2016/07/01 1 2016/07/31 10 2016/08/01"></div>
+            <div id="karma" style="float:left" data-name="Abhijeet" data-checkins="1 2016/01/18 1 2016/02/05 232 2016/02/06 113 2016/02/07 185 2016/02/08 28 2016/02/09 18 2016/02/10 39 2016/02/11 100 2016/02/14 4 2016/02/16 6 2016/02/17 207 2016/02/19 35 2016/02/21 53 2016/02/22 5 2016/02/25 23 2016/02/26 102 2016/03/01 2 2016/03/02 41 2016/03/08 158 2016/03/15 92 2016/03/16 34 2016/03/17 1 2016/03/18 87 2016/03/30 9 2016/03/31 4 2016/04/04 30 2016/04/05 13 2016/04/21 48 2016/04/29 92 2016/05/02 1 2016/05/16 68 2016/05/18 10 2016/05/30 414 2016/06/28 5 2016/06/30 5 2016/07/01 82 2016/07/11 1 2016/07/13 1 2016/07/15 26 2016/07/23 44 2016/07/25 12 2016/07/26 8 2016/07/27 24 2016/07/29 1 2016/08/01 8 2016/08/16 5 2016/08/19 6 2016/08/28 171 2016/09/01 1 2016/09/06 42 2016/09/08 199 2016/09/11 3 2016/09/15 2 2016/09/16 24 2016/09/18 21 2016/09/19 5 2016/09/20 86 2016/09/21 10 2016/09/23 11 2016/09/27 133 2016/09/28 17 2016/09/29 3 2016/09/30 91 2016/10/01" data-adc="+1987-344=972"></div>
+            <div style="float:left"><h1 id="username" style="line-height:50%;color:green;font-weight:bold"></h1></div>
+            <div id="legend"><div style="float:left;width:36px">Less</div>
+                <div style="float:left;width:16px;background-color:#EEEEEE;box-shadow: inset 0 0 1px 1px #CCCCCC"></div>
+                <div style="float:left;width:16px;background-color:#d6e685;box-shadow: inset 0 0 1px 1px #8cc665"></div>
+                <div style="float:left;width:16px;background-color:#8cc665;box-shadow: inset 0 0 1px 1px #44a340"></div>
+                <div style="float:left;width:16px;background-color:#44a340;box-shadow: inset 0 0 1px 1px #1e6823"></div>
+                <div style="float:left;width:16px;background-color:#1e6823;box-shadow: inset 0 0 1px 1px #005800"></div>
+                <div style="float:left;width:36px;text-align:right">More</div></div>
+        </div>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.2/lodash.min.js"></script>
+        <!-- script type="text/javascript" src="html2canvas.js"></script -->
+        <script>
+            Number.prototype.format = function(n, x) {
+                var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+                return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
+            };
+            var colors   = ['#FFFFFF', '#EEEEEE', '#d6e685', '#8cc665', '#44a340', '#1e6823'];
+            var borders  = ['#FFFFFF', '#CCCCCC', '#8cc665', '#44a340', '#1e6823', '#005800'];
+            var checkins = $('#karma').data("checkins").split(" ");
+            var username = $('#karma').data("name");
+            var breakup  = $('#karma').data("adc");
+            var total    = 0;
+            for (var i = 0; i < checkins.length; i += 2) {
+                total += parseInt(checkins[i]);
+            }
+            if (typeof breakup !== 'undefined') {
+                $('#username').html("&nbsp;&nbsp;&nbsp;" + total.format() + "&nbsp;<span style=\"font-size:14px;color:gray;font-weight:normal\">contributions</span><br>" + "&nbsp;&nbsp;&nbsp;<span style=\"font-size:14px;color:#44a340;font-weight:normal\">" + breakup + "</span><br>");
+            } else {
+                $('#username').html("&nbsp;&nbsp;&nbsp;" + total.format() + "&nbsp;<span style=\"font-size:14px;color:gray;font-weight:normal\">contributions</span>");
+            }
+            var short_months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+            var from         = new Date(checkins[1]);
+            var first_date_in_orig_data = from;
+            if (from.getDate() != 1) {
+                checkins.unshift("0", from.getFullYear() + "/" + short_months[from.getMonth()] + "/01");
+                from = new Date(checkins[1]);
+            }
+            //console.log("from date = " + from);
+
+            //////////////////////////////////////////////////////////////////
+            // NOTE: If the last date in the data less than today, then add today as the last entry
+            // with 0 contributions. This may not always be desirable e.g., if we only want to see
+            // the historical data terminating at a specific older date.
+            var today      = new Date();
+            var short_date = today.getDate().toString();
+            if (short_date.length == 1)
+                short_date = "0" + short_date;
+            var today_short_format = today.getFullYear() + "/" + short_months[today.getMonth()] + "/" + short_date;   
+            //console.log(today_short_format);
+            if (today_short_format != checkins[checkins.length-1] && today > new Date(checkins[checkins.length-1])) {
+                checkins.push("0");
+                checkins.push(today_short_format);
+            }
+            //////////////////////////////////////////////////////////////////
+
+            var to      = new Date(checkins[checkins.length-1]);
+            //console.log(to);
+            var msDay   = 60 * 60 * 24 * 1000;
+            var n       = Math.floor(to - from) / msDay;
+            n          += from.getDay() + 1;
+            var adj_n   = (n < 28) ? 28 : n;
+            var cols    = Math.ceil(adj_n/7);
+            //console.log("cols = " + cols);
+            // Map the datapoints to the div-numbers
+            var mapped_data  = {};
+            var checkin_date = {}; // For the tooltip
+            var last_entry   = 0;
+            // Calculate offsets from the first top-left square
+            // from.getDay() is the offset of the 1st day of the 1st month
+            for (var c = 1; c < checkins.length; c += 2) {
+                var d                    = new Date(checkins[c]);
+                var diff                 = Math.floor(d - from) / msDay + from.getDay();
+                var col                  = Math.floor(diff / 7);
+                var row                  = diff % 7;
+                last_entry               = row * cols + col;
+                mapped_data[last_entry]  = checkins[c-1];
+                checkin_date[last_entry] = checkins[c];
+                //console.log("Processed date = " + d);
+                //console.log("i = ", row*cols + col, " #c = ", checkins[c-1]);
+            }
+            $('#karma').empty();
+            var last_day    = to.getDay();
+            var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var formatted_start_date =  month_names[first_date_in_orig_data.getMonth()] + " " + first_date_in_orig_data.getDate() + " " + first_date_in_orig_data.getFullYear();
+            var formatted_end_date   =  month_names[to.getMonth()] + " " + to.getDate() + " " + to.getFullYear();
+            $('#username').append("<br>&nbsp;&nbsp;&nbsp;<span style=\"font-size:14px;font-weight:normal;color:gray\">" +  formatted_start_date + " - " +  formatted_end_date  + "</span>");
+            var divs        = "";
+            for (var i = 0; i < cols*7; i++) {
+                var sty   = "style=\"";
+                var color = 1;
+                if ((i+1) % cols === 0) {
+                    //console.log(last_day);
+                    if ((i+1) / cols > last_day) {
+                        color = 0; // Show white boxes beyond the last day of the checkin
+                    }
+                }
+                if (i % cols === 0) {
+                    sty += "clear:left;";
+                }
+                var val = 0;
+                if (_.has(mapped_data, i)) {
+                    val   = parseInt(mapped_data[i]);
+                    // Choose these values as per the data
+                    if (val <= 0) {
+                        color = 1;
+                    } else if (val <= 5) {
+                        color = 2;
+                    } else if (val <= 35) {
+                        color = 3;
+                    } else if (val <= 75) {
+                        color = 4;
+                    } else {
+                        color = 5;
+                    }
+                }
+                //color = Math.floor((Math.random() * 5) + 1);
+                sty  += "background-color:" + colors[color] + ";";
+                if (color > 1)
+                    sty  += "box-shadow: inset 0 0 1px 1px " + borders[color] + ";";
+                sty  += "\"";
+                var tooltip = "";
+                if (val > 0) {
+                    var tooltip_date           = new Date(checkin_date[i]);
+                    var formatted_tooltip_date = month_names[tooltip_date.getMonth()] + " " + tooltip_date.getDate() + ", " + tooltip_date.getFullYear();
+                    var is_plural = (val == 1) ? "contribution" : "contributions";
+                    tooltip       = " title=\"" + val.toString() + " " + is_plural + " on " + formatted_tooltip_date + "\"";
+                }
+                divs += "<div " + sty + tooltip + "></div>";
+            }
+            $('#karma').html(divs);
+            var from_m = from.getMonth();
+            $('#months').empty();
+            var days_in_a_month            = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            var month_divs                 = "<div style=\"width:36px\"></div>";
+            var cols_for_this_month        = Math.ceil((from.getDay() + days_in_a_month[from.getMonth()])/7);
+            var month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
+            var overlaps_with_prev         = (0 === from.getDay()) ? false : true;
+            var days_overlapping_with_next = (7 - (7 * cols_for_this_month - (from.getDay() + days_in_a_month[from.getMonth()]))) % 7;
+            //console.log("ovl = ", days_overlapping_with_next);
+            var sty = "style=\"";
+            sty    += "width:" + month_col_width.toString() + "px;";
+            if (overlaps_with_prev) {
+                sty += "margin-left:-16px";
+            }
+            sty += "\"";
+            month_divs += "<div " + sty + ">" + month_names[from_m] + "</div>";
+            var j_max = Math.floor(cols/4.2); // FIXME 4.3 = (366/12) / 7
+            var i     = from_m;
+            for (var j = 1; j < j_max; j++) {
+                i++;
+                i = i % 12;
+                cols_for_this_month        = Math.ceil((days_overlapping_with_next + days_in_a_month[i])/7);
+                month_col_width            = 16 * cols_for_this_month + 2 * (cols_for_this_month - 1);
+                overlaps_with_prev         = (0 === days_overlapping_with_next) ? false : true;
+                days_overlapping_with_next = (7 - (7 * cols_for_this_month - (days_overlapping_with_next + days_in_a_month[i]))) % 7;
+                //console.log("m = ", month_names[i]);
+                //console.log("cols/m = ", cols_for_this_month);
+                //console.log("ovl = ", days_overlapping_with_next);
+                sty  = "style=\"";
+                sty += "width:" + month_col_width.toString() + "px;";
+                if (overlaps_with_prev) {
+                    sty += "margin-left:-16px";
+                }
+                sty += "\"";
+                month_divs += "<div " + sty + ">" + month_names[i] + "</div>";
+            }
+            $('#months').html(month_divs);
+/*
+            html2canvas(document.body, {
+                onrendered: function(canvas) {
+                    document.body.appendChild(canvas);
+                }
+            });
+*/
+        </script>
+    </body>
+</html>
